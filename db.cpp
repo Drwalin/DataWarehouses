@@ -56,11 +56,11 @@ namespace db {
 		virtual std::string _tab()=0;
 		static std::string table_name() {
 			static T* temp = new T;
-			return temp._tab();
+			return temp->_tab();
 		}
 		static void table_to_csv() {
 			std::string table_name = table::entities().begin()->second->_tab();
-			std::string file_name = config["tables"][table_name]["csv"];
+			std::string file_name = ::config["tables"][table_name]["csv"];
 			std::ofstream file(file_name);
 			for(auto it : entities()) {
 				it.second->to_csv(file);
@@ -68,7 +68,7 @@ namespace db {
 			}
 		}
 		static const JSON& config() {
-			return config["tables"][table_name()];
+			return ::config["tables"][table_name()];
 		}
 	};
 	
@@ -125,8 +125,8 @@ namespace db {
 	public:
 		time_t entry_date;
 		time_t exit_date;
-		webinar* webinar;
-		user* user;
+		class webinar* webinar;
+		class user* user;
 		virtual void to_csv(std::ostream& out) override {
 			out << "," << to_string(entry_date);
 			out << "," << to_string(exit_date);
@@ -138,7 +138,7 @@ namespace db {
 	
 	class problem : public table<problem> {
 	public:
-		webinar* webinar;
+		class webinar* webinar;
 		int time_minutes;
 		std::string type;
 		std::string culprit;
