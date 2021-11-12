@@ -1,0 +1,56 @@
+{
+	"tables": {
+		"user": {
+			"size": 100000,
+			"csv": "users.csv",
+			"changes": 100
+		},
+		"course": {
+			"size": 100,
+			"csv": "courses.csv",
+			"changes": 3
+		},
+		"webinar": {
+			"size": 2500,
+			"csv": "webinars.csv",
+			"changes": 0
+		},
+		"stay": {
+			"size": 10000000,
+			"csv": "stays.csv",
+			"changes": 0
+		},
+		"problem": {
+			"size": 10000,
+			"csv": "problems.csv",
+			"changes": 10
+		}
+	},
+	"date": {
+		"start": {
+			"year": 2021,
+			"month": 1,
+			"day": 1,
+			"hour": 6,
+			"minute": 0,
+			"second": 0
+		},
+		"end1": {
+			"year": 2021,
+			"month": 12,
+			"day": 31,
+			"hour": 23,
+			"minute": 59,
+			"second": 59
+		},
+		"end2": {
+			"year": 2022,
+			"month": 12,
+			"day": 31,
+			"hour": 23,
+			"minute": 59,
+			"second": 59
+		}
+	}
+}
+
