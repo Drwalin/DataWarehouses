@@ -2,6 +2,8 @@
 	"tables": {
 		"user": {
 			"size": 100000,
+			"number_admin": 10,
+			"number_prowadzacy": 250,
 			"csv": "users.csv",
 			"changes": 100
 		},
@@ -51,6 +53,15 @@
 			"minute": 59,
 			"second": 59
 		}
+	},
+	"data": {
+		"names": {
+			"first": "data/first-names.json",
+			"second": "data/middle-names.json",
+			"third": "data/names.json"
+		},
+		"languages": "languages.json",
+		"libraries": "libraries.json"
 	}
 }
 

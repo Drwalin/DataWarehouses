@@ -9,6 +9,9 @@
 #include <memory>
 #include <map>
 #include <unordered_map>
+#include <vector>
+
+#include "JSON/include/JSON.hpp"
 
 struct q_w {
 	uint16_t w[4];

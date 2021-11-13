@@ -28,7 +28,7 @@ struct {
 
 namespace db {
 	template<typename T, typename ..._args>
-	std::string generate_random(const std::unordered_map<std::string, T>& table,
+	std::string generate_unique(const std::unordered_map<std::string, T>& table,
 			std::string(*random)(_args...), _args... args) {
 		while(true) {
 			std::string uuid = random(args...);
