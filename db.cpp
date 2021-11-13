@@ -10,7 +10,6 @@
 #include <map>
 #include <unordered_map>
 #include <unordered_set>
-#include <set>
 
 #include "JSON/include/JSON.hpp"
 
@@ -19,9 +18,10 @@
 
 struct {
 	struct {
-		time_t start;
-		time_t end1;
-		time_t end2;
+		Time start1;
+		Time end1;
+		Time start2;
+		Time end2;
 	} date;
 	const JSON& operator[](const char* key) const {
 		return json[key];
@@ -36,6 +36,18 @@ std::string random_problem_culprit();
 std::string random_course_name();
 
 namespace db {
+	template<typename T, typename ..._args>
+	T get_unique(const std::vector<T>& table,
+			const std::unordered_set<T>& unique) {
+		T v;
+		for(int i=0; i<100; ++i) {
+			v = table[random(0,0)%table.size()];
+			if(unique.find(v) == unique.end())
+				return v;
+		}
+		return v;
+	}
+	
 	template<typename T, typename ..._args>
 	std::string generate_unique(const std::unordered_map<std::string, T>& table,
 			std::string(*random)(_args...), _args... args) {
@@ -52,20 +64,20 @@ namespace db {
 	}
 	
 	template<typename T>
-	class table : public std::enable_shared_from_this<T> {
+	class table {
 	public:
 		table() = default;
 		virtual ~table() = default;
 		std::string id;
-		using table_type = std::unordered_map<std::string, std::shared_ptr<T>>;
-		using array_type = std::vector<std::shared_ptr<T>>;
+		using table_type = std::unordered_map<std::string, T*>;
+		using array_type = std::vector<T*>;
 		using super = table<T>;
 		inline static table_type entities;
-		inline static std::vector<std::shared_ptr<T>> entities_list;
+		inline static std::vector<T*> entities_list;
 		virtual void add() {
 			id = generate_unique(entities, random_uuid);
-			entities[id] = this->shared_from_this();
-			entities_list.emplace_back(this->shared_from_this());
+			entities[id] = (T*)this;
+			entities_list.emplace_back((T*)this);
 		}
 		virtual void to_csv(std::ostream& out) {
 			out << id;
@@ -75,11 +87,12 @@ namespace db {
 			static T* temp = new T;
 			return temp->_tab();
 		}
-		inline  static void table_to_csv() {
+		inline static void table_to_csv() {
 			std::string table_name = table::entities.begin()->second->_tab();
 			std::string file_name = ::config["tables"][table_name]["csv"];
 			std::ofstream file(file_name);
-			for(auto it : entities) {
+			std::map<std::string, T*> sorted(entities.begin(), entities.end());
+			for(auto it : sorted) {
 				it.second->to_csv(file);
 				file << "\n";
 			}
@@ -99,16 +112,17 @@ namespace db {
 		inline static array_type others;
 		
 		virtual void to_csv(std::ostream& out) override {
+			super::to_csv(out);
 			out << "," << name;
 			out << "," << role;
 		}
 		virtual void add() override {
 			super::add();
 			name = random_user_name();
-			if(role == "prowadzący")
-				instructors.emplace_back(shared_from_this());
+			if(role == "prowadzacy")
+				instructors.emplace_back(this);
 			else
-				others.emplace_back(shared_from_this());
+				others.emplace_back(this);
 		}
 		virtual std::string _tab() override { return "user"; }
 	};
@@ -125,9 +139,10 @@ namespace db {
 		
 		virtual void add() override {
 			super::add();
-			unique_name[name] = this->shared_from_this();
+			unique_name[name] = this;
 		}
 		virtual void to_csv(std::ostream& out) override {
+			super::to_csv(out);
 			name = generate_unique(entities, random_course_name);
 			ects = 0;
 			for(int i=0; i<6; ++i)
@@ -135,8 +150,10 @@ namespace db {
 			if(ects | random(0, 5))
 				ects = random(1, 2);
 			semester = random(1, 10);
-			if(random(0, 15) == 0)
+			if(random(0, 15) == 0) {
 				semester = random(11, 15);
+				printf("random(11,15) = %lu", semester);
+			}
 			out << "," << name;
 			out << "," << ects;
 			out << "," << semester;
@@ -149,15 +166,16 @@ namespace db {
 		webinar() = default;
 		~webinar() = default;
 		class course* course;
-		time_t planned_start;
-		time_t planned_end;
-		time_t start;
-		time_t end;
+		Time planned_start;
+		Time planned_end;
+		Time start;
+		Time end;
 		bool has_problems;
 		std::unordered_set<class stay*> stays;
 		std::unordered_set<class user*> users;
 		std::unordered_set<class problem*> problems;
 		virtual void to_csv(std::ostream& out) override {
+			super::to_csv(out);
 			out << "," << course->id;
 			out << "," << to_string(planned_start);
 			out << "," << to_string(planned_end);
@@ -172,19 +190,24 @@ namespace db {
 	public:
 		stay() = default;
 		~stay() = default;
-		time_t entry_date;
-		time_t exit_date;
+		Time entry_date;
+		Time exit_date;
 		class webinar* webinar;
 		class user* user;
 		virtual void add() override {
 			super::add();
+			if(webinar)
 			webinar->stays.insert(this);
+			if(user)
 			user->stays.insert(this);
 		}
 		virtual void to_csv(std::ostream& out) override {
+			super::to_csv(out);
 			out << "," << to_string(entry_date);
 			out << "," << to_string(exit_date);
+			if(webinar)
 			out << "," << webinar->id;
+			if(user)
 			out << "," << user->id;
 		}
 		virtual std::string _tab() override { return "stay"; }
@@ -199,15 +222,19 @@ namespace db {
 		std::string type;
 		std::string culprit;
 		virtual void to_csv(std::ostream& out) override {
+			super::to_csv(out);
 			type = random_problem_type();
 			culprit = random_problem_culprit();
+			if(webinar)
 			out << "," << webinar->id;
 			out << "," << type;
 			out << "," << culprit;
 		}
 		virtual void add() override {
 			super::add();
+			if(webinar)
 			webinar->has_problems = true;
+			if(webinar)
 			webinar->problems.insert(this);
 		}
 		virtual std::string _tab() override { return "problem"; }
