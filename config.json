@@ -1,7 +1,7 @@
 {
 	"tables": {
 		"user": {
-			"size": 100000,
+			"size": 10000,
 			"number_admin": 10,
 			"number_prowadzacy": 250,
 			"csv": "users.csv",
@@ -18,7 +18,7 @@
 			"changes": 0
 		},
 		"stay": {
-			"size": 10000000,
+			"size": 1000000,
 			"csv": "stays.csv",
 			"changes": 0
 		},

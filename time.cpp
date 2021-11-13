@@ -40,6 +40,10 @@ time_t hour(int hours) {
 	return 3600*hours;
 }
 
+time_t minute(int minutes) {
+	return 60*minutes;
+}
+
 time_t round_down_to_full_days(time_t t) {
 	return t - (t%day(1));
 }

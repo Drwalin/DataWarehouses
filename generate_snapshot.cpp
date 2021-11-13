@@ -24,7 +24,17 @@ void save_to_files() {
 	db::problem::table_to_csv();
 }
 
+void generate_users(size_t students, size_t instructors, size_t admins) {
+	new db::user();
+}
+
+void distribute_webinars(db::webinar::table_type& table) {
+
+}
+
 void generate_snapshot(time_t start, time_t end) {
+	
+	
 	
 	
 	

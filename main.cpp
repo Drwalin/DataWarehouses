@@ -13,6 +13,7 @@
 #include "random.cpp"
 #include "time.cpp"
 #include "db.cpp"
+#include "name_generator.cpp"
 #include "generate_snapshot.cpp"
 
 void read_config() {

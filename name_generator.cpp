@@ -15,14 +15,14 @@
 #include "random.cpp"
 #include "db.cpp"
 
-std::string generate_user_name() {
+std::string random_user_name() {
 	static JSON first_names, second_names, third_names;
 	static int static_execution = true;
 	if(static_execution) {
 		static_execution = false;
-		first_names.Read(config["data"]["names"]["first"]);
-		second_names.Read(config["data"]["names"]["second"]);
-		third_names.Read(config["data"]["names"]["third"]);
+		first_names.Read(config["data"]["names"]["first"].String());
+		second_names.Read(config["data"]["names"]["second"].String());
+		third_names.Read(config["data"]["names"]["third"].String());
 	}
 	
 	if(first_names.size() && second_names.size() && third_names.size()) {
@@ -72,8 +72,8 @@ std::string random_course_name() {
 	static int static_execution = true;
 	if(static_execution) {
 		static_execution = false;
-		a.Read(config["data"]["languages"]);
-		b.Read(config["data"]["libraries"]);
+		a.Read(config["data"]["languages"].String());
+		b.Read(config["data"]["libraries"].String());
 	}
 	
 	if(a.size() && b.size()) {
