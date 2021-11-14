@@ -12,7 +12,14 @@
 
 #include "JSON/include/JSON.hpp"
 
-const uint64_t YEAR_ZERO = 1970;
+const uint64_t YEAR_ZERO = 1900;
+const uint64_t YEAR_MAX = 2100;
+
+bool is_leap(uint64_t year) {
+	if((year%400==0) || (year%4==0 && year%100!=0))
+		return true;
+	return false;
+}
 
 uint64_t days_in_year(uint64_t year) {
 	if((year%400==0) || (year%4==0 && year%100!=0))
@@ -31,17 +38,29 @@ uint64_t days_in_month(uint64_t month, uint64_t year) {
 	return 30;
 }
 
+// uint64_t days_to_year(uint64_t year) {
+// 	uint64_t sum = 0;
+// 	for(uint64_t i=YEAR_ZERO; i<year; ++i)
+// 		sum += days_in_year(i);
+// 	return sum;
+// }
+
 uint64_t days_to_year(uint64_t year) {
-	uint64_t sum = 0;
-	for(uint64_t i=YEAR_ZERO; i<year; ++i)
+	if(year > YEAR_MAX)
+		exit(311);
+	uint64_t sum = ((365*4 + 1) * ((year-YEAR_ZERO)/4))-(year>2000 ? 1 : 0);
+	for(uint64_t i=year-(year%4); i<year; ++i)
 		sum += days_in_year(i);
 	return sum;
 }
 
 uint64_t year_from_days(uint64_t days, uint64_t& not_even) {
-	for(uint64_t i=YEAR_ZERO;; ++i) {
+	uint64_t years = YEAR_ZERO + 4*(days/(365*4+1));
+	days %= (365*4+1);
+	days += (years>2000 ? 1 : 0);
+	for(uint64_t i=years;; ++i) {
 		const uint64_t d = days_in_year(i);
-		if(days < d) {
+		if(days <= d) {
 			not_even = days;
 			return i;
 		}
@@ -49,14 +68,47 @@ uint64_t year_from_days(uint64_t days, uint64_t& not_even) {
 	}
 }
 
-uint64_t month_from_days(uint64_t days, uint64_t& month_days, uint64_t year) {
+// uint64_t year_from_days(uint64_t days, uint64_t& not_even) {
+// 	for(uint64_t i=YEAR_ZERO;; ++i) {
+// 		const uint64_t d = days_in_year(i);
+// 		if(days <= d) {
+// 			not_even = days;
+// 			return i;
+// 		}
+// 		days -= d;
+// 	}
+// }
+
+uint64_t __month_from_days(uint64_t days, uint64_t& month_days, uint64_t year) {
+	days--;
 	for(uint64_t i=1;; ++i) {
 		const uint64_t d = days_in_month(i, year);
-		if(days < d) {
-			month_days = days;
+		if(days <= d) {
+			month_days = days+1;
 			return i;
 		}
 		days -= d;
+	}
+}
+
+static uint64_t _leap_month[366], _normal_month[365];
+static uint64_t _leap_days[366], _normal_days[365];
+uint64_t month_from_days(uint64_t days, uint64_t& month_days, uint64_t year) {
+	static int __static = 1;
+	if(__static) {
+		__static = 0;
+		for(int i=0; i<366; ++i) {
+			_leap_month[i] = __month_from_days(i+1, _leap_days[i], 2000);
+			if(i<365)
+				_normal_month[i] = __month_from_days(i+1, _normal_days[i], 2001);
+		}
+	}
+	if(is_leap(year)) {
+		month_days = _leap_days[days-1];
+		return _leap_month[days-1];
+	} else {
+		month_days = _normal_days[days-1];
+		return _normal_month[days-1];
 	}
 }
 
@@ -137,13 +189,16 @@ struct Time {
 };
 
 Time get_tm(const JSON& json) {
-	return Time(
+	Time t(
 			json["year"].Integer(),
 			json["month"].Integer(),
 			json["day"].Integer(),
 			json["hour"].Integer(),
 			json["minute"].Integer(),
 			json["second"].Integer() );
+
+	printf("\n made date: %s === %s\n", t.to_string().c_str(), json.Write().c_str());
+	return t;
 }
 
 Time minute(int minutes) {
