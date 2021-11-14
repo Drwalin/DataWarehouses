@@ -152,7 +152,7 @@ namespace db {
 			semester = random(1, 10);
 			if(random(0, 15) == 0) {
 				semester = random(11, 15);
-				printf("random(11,15) = %lu", semester);
+				printf("random(11,15) = %i", semester);
 			}
 			out << "," << name;
 			out << "," << ects;
