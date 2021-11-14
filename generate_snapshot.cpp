@@ -23,6 +23,9 @@ void save_to_files() {
 	db::webinar::table_to_csv();
 	db::stay::table_to_csv();
 	db::problem::table_to_csv();
+	db::ankieta_kurs::table_to_csv();
+	db::ankieta_portalu::table_to_csv();
+	db::zgloszenia_problemow::table_to_csv();
 }
 
 std::vector<db::user*> generate_users(uint64_t students, uint64_t instructors,
@@ -157,6 +160,68 @@ std::vector<db::problem*> distribute_problems(
 	return problems;
 }
 
+void generate_ankiety_zgloszenia(const std::vector<db::webinar*>& webinars,
+		Time start, Time end) {
+	uint64_t count_oceny_course =
+		config["tables"]["ocena_kursu"]["size"];
+	uint64_t count_oceny_portalu =
+		config["tables"]["ocena_portalu"]["size"];
+	uint64_t count_zgloszenia =
+		config["tables"]["zgloszenia_problemow"]["size"];
+	
+	for(uint64_t i=0; i<count_oceny_course; ++i)
+		(new db::ankieta_kurs)->add();
+	for(uint64_t i=0; i<count_oceny_portalu; ++i)
+		(new db::ankieta_portalu)->add();
+	for(uint64_t i=0; i<count_zgloszenia; ++i) {
+		auto z = new db::zgloszenia_problemow;
+		for(int ___RE=0; ___RE<10; ++___RE) {
+			if(___RE > 1)
+				printf(" trying 1: %i %s<>%s  -> %s\n", ___RE, start.to_string().c_str(),
+						end.to_string().c_str(), z->date.to_string().c_str());
+			z->date = random(start, end);
+			if(z->date > end ||
+				z->date < start)
+				continue;
+			else
+				break;
+		}
+		switch(random(0,2)) {
+			case 0:
+				{
+					z->opis = "Wygenerowany opis zgloszenia problemow z kursem";
+					z->course = db::course::entities_list[
+						random(db::course::entities_list.size())];
+				} break;
+			case 1:
+				{
+					z->opis = "Wygenerowany opis zgloszenia problemow z webinarem";
+					z->webinar = db::problem::entities_list[
+						random(db::problem::entities_list.size())];
+					for(int ___RE=0; ___RE<10; ++___RE) {
+						if(___RE > 1)
+							printf(" trying 2: %i %s<>%s  -> %s\n", ___RE,
+									z->webinar->webinar->start.to_string().c_str(),
+									z->webinar->webinar->end.to_string().c_str(), z->date.to_string().c_str());
+						z->date = generate_normal_min_max(
+								z->webinar->webinar->start,
+								z->webinar->webinar->end);
+						if(z->date > z->webinar->webinar->end ||
+							z->date < z->webinar->webinar->start)
+							continue;
+						else
+							break;
+					}
+				} break;
+			default:
+				{
+					z->opis = "Wygenerowany opis zgloszenia problemow z platforma";
+				}
+		}
+		z->add();
+	}
+}
+
 void generate_snapshot(Time start, Time end) {
 	
 	auto new_users = generate_users(config["tables"]["user"]["size"],
@@ -210,6 +275,9 @@ void generate_snapshot(Time start, Time end) {
 	
 	auto problems = distribute_problems(webinars,
 			config["tables"]["problem"]["size"]);
+	
+	
+	generate_ankiety_zgloszenia(webinars, start, end);
 	
 	save_to_files();
 }

@@ -31,6 +31,8 @@ int64_t random(int64_t min, int64_t max) {
 }
 
 uint64_t random(uint64_t modulus) {
+	if(modulus == 0)
+		return 0;
 	return (uint64_t)random(0,0) % modulus;
 }
 
@@ -48,7 +50,7 @@ uint64_t generate_normal_min_max(uint64_t min, uint64_t max) {
 	const uint64_t diff = max-min;
 	const uint64_t count = 13;
 	const uint64_t r1 = diff / count;
-	uint64_t sum = random(0, diff - r1*count);
+	uint64_t sum = random(diff - r1*count);
 	for(uint64_t i=0; i<count; ++i) {
 		sum += random(0, r1-1);
 	}

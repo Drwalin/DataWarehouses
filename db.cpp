@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <algorithm>
+#include <functional>
 
 #include "JSON/include/JSON.hpp"
 
@@ -76,6 +77,7 @@ namespace db {
 		using table_type = std::unordered_map<std::string, T*>;
 		using array_type = std::vector<T*>;
 		using super = table<T>;
+		using outter_type = T;
 		inline static table_type entities;
 		inline static std::vector<T*> entities_list;
 		virtual void add() {
@@ -100,10 +102,7 @@ namespace db {
 			sorted.reserve(entities.size());
 			for(const auto& it : entities)
 				sorted.emplace_back(it.second);
-			std::sort(sorted.begin(), sorted.end(),
-					[](const T*a, const T* b)->bool{
-						return a->id < b->id;
-					});
+			std::sort(sorted.begin(), sorted.end(), T().get_sort_function());
 			for(auto it : sorted) {
 				it->to_csv(file);
 				file << "\n";
@@ -111,6 +110,12 @@ namespace db {
 		}
 		inline static const JSON& config() {
 			return ::config["tables"][table_name()];
+		}
+		virtual std::function<bool(const T*, const T*)>
+			get_sort_function() const {
+			return [](const T*a, const T* b) -> bool {
+				return a->id < b->id;
+			};
 		}
 	};
 	
@@ -227,7 +232,9 @@ namespace db {
 			super::to_csv(out);
 			type = random_problem_type();
 			culprit = random_problem_culprit();
+			time_minutes = random(1, (webinar->end-webinar->start).minutes());
 			out << "," << webinar->id;
+			out << "," << time_minutes;
 			out << "," << type;
 			out << "," << culprit;
 		}
@@ -236,6 +243,104 @@ namespace db {
 			webinar->has_problems = true;
 		}
 		virtual std::string _tab() override { return "problem"; }
+	};
+	
+	
+	
+	
+	
+	
+	
+	
+	class ankieta_kurs : public table<ankieta_kurs> {
+	public:
+		ankieta_kurs() {
+			static uint64_t _ID = 0;
+			ID = ++_ID;
+		}
+		uint64_t ID;
+		class course* course;
+		int oceny[5];
+		
+		virtual void to_csv(std::ostream& out) override {
+			out << course->id;
+			for(int o : oceny)
+				out << "," << o;
+		}
+		virtual void add() override {
+			course = course::entities_list[random(course::entities_list.size())];
+			for(int& o : oceny)
+				o = random(1, 5);
+			super::add();
+		}
+		virtual std::string _tab() override { return "ocena_kursu"; }
+		virtual std::function<bool(const outter_type*, const outter_type*)>
+			get_sort_function() const override {
+			return [](const outter_type*a, const outter_type* b) -> bool {
+				return a->ID < b->ID;
+			};
+		}
+	};
+	
+	class ankieta_portalu : public table<ankieta_portalu> {
+	public:
+		ankieta_portalu() {
+			static uint64_t _ID = 0;
+			ID = ++_ID;
+		}
+		uint64_t ID;
+		int oceny[3];
+		
+		virtual void to_csv(std::ostream& out) override {
+			for(int o : oceny)
+				out << "," << o;
+		}
+		virtual void add() override {
+			for(int& o : oceny)
+				o = random(1, 5);
+			super::add();
+		}
+		virtual std::string _tab() override { return "ocena_portalu"; }
+		virtual std::function<bool(const outter_type*, const outter_type*)>
+			get_sort_function() const override {
+			return [](const outter_type*a, const outter_type* b) -> bool {
+				return a->ID < b->ID;
+			};
+		}
+	};
+	
+	class zgloszenia_problemow : public table<zgloszenia_problemow> {
+	public:
+		zgloszenia_problemow() {
+			platform = (false);
+			webinar = (NULL);
+			course = (NULL);
+		}
+		Time date;
+		std::string opis;
+		class problem* webinar;
+		class course* course;
+		bool platform;
+		
+		virtual void to_csv(std::ostream& out) override {
+			out << date;
+			out << "," << opis;
+			out << "," << (webinar ? webinar->webinar->id : "Nie");
+			out << "," << (course&&!webinar ? course->id : "Nie");
+			if(webinar == NULL && course == NULL)
+				platform = true;
+			out << "," << (platform ? "Tak" : "Nie");
+		}
+		virtual void add() override {
+			super::add();
+		}
+		virtual std::string _tab() override { return "zgloszenia_problemow"; }
+		virtual std::function<bool(const outter_type*, const outter_type*)>
+			get_sort_function() const override {
+			return [](const outter_type*a, const outter_type* b) -> bool {
+				return a->date < b->date;
+			};
+		}
 	};
 }
 
