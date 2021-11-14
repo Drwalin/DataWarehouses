@@ -11,7 +11,7 @@ GO
 CREATE TABLE Uzytkownik_Systemu (
 	id CHAR(16) PRIMARY KEY,
 	nazwaUzytkownika NVARCHAR(MAX) NOT NULL,
-	rola VARCHAR(MAX) NOT NULL
+	rola NVARCHAR(MAX) NOT NULL
 );
 GO
 
