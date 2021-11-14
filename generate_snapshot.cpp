@@ -64,14 +64,13 @@ std::vector<db::course*> generate_courses(uint64_t courses) {
 void distribute_one_day_webinars(const std::vector<db::webinar*>& webinars,
 		Time today) {
 	today = today.rounded_down_to_full_days();
-// 	printf(" webinars in (%s): %lu\n", to_string(today).c_str(), webinars.size());
 	std::vector<Time> hours;
 	for(int i=7; i<20; ++i)
 		hours.emplace_back(today + hour(i));
 	Time max_end = hours.back() + hour(1);
 	for(db::webinar* w : webinars) {
-		w->planned_start = hours[random(0,0)%hours.size()];
-		w->planned_end = w->planned_start + hour(random(1,2)+random(0,1));
+		w->planned_start = hours[random(0, hours.size()-1)];
+		w->planned_end = w->planned_start + hour(random(1, 2)+random(0, 1));
 		if(w->planned_end > max_end)
 			w->planned_end = max_end;
 		w->add();
@@ -81,7 +80,6 @@ void distribute_one_day_webinars(const std::vector<db::webinar*>& webinars,
 std::vector<db::webinar*> distribute_webinars(
 		std::vector<std::vector<db::webinar*>>& day_webinars,
 		uint64_t count, Time start, Time end) {
-	printf(" all webinars: %lu\n", count);
 	start = start.rounded_down_to_full_days();
 	end = end.rounded_down_to_full_days();
 	uint64_t all_days = (end-start)/day(1);
@@ -92,7 +90,7 @@ std::vector<db::webinar*> distribute_webinars(
 	for(uint64_t i=0; i<count; ++i) {
 		uint64_t select_day;
 		for(;;) {
-			select_day = random(0, 0) % all_days;
+			select_day = random(0, all_days-1);
 			if(random(0, 100)==0)
 				break;
 			if(is_weekend(start + day(select_day)))
@@ -103,7 +101,7 @@ std::vector<db::webinar*> distribute_webinars(
 		webinars.emplace_back(w);
 		w->course =
 			db::course::entities_list[
-				random(0,0)%db::course::entities_list.size()
+				random(0, db::course::entities_list.size()-1)
 			];
 	}
 	

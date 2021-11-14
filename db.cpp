@@ -41,7 +41,7 @@ namespace db {
 			const std::unordered_set<T>& unique) {
 		T v;
 		for(int i=0; i<100; ++i) {
-			v = table[random(0,0)%table.size()];
+			v = table[random(0, table.size()-1)];
 			if(unique.find(v) == unique.end())
 				return v;
 		}
@@ -147,13 +147,11 @@ namespace db {
 			ects = 0;
 			for(int i=0; i<6; ++i)
 				ects += random(0, 1);
-			if(ects | random(0, 5))
-				ects = random(1, 2);
+			if(ects==0 && random(0, 5))
+				ects = random(1, 6);
 			semester = random(1, 10);
-			if(random(0, 15) == 0) {
+			if(random(0, 15) == 0)
 				semester = random(11, 15);
-				printf("random(11,15) = %i", semester);
-			}
 			out << "," << name;
 			out << "," << ects;
 			out << "," << semester;
