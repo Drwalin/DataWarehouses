@@ -33,8 +33,18 @@ uint64_t days_in_month(uint64_t month, uint64_t year) {
 			return 29;
 		return 28;
 	}
-	if(month&1)
-		return 31;
+	switch(month) {
+		case 1:
+		case 3:
+		case 5:
+		case 7:
+		case 8:
+		case 10:
+		case 12:
+			return 31;
+		default:
+			return 30;
+	}
 	return 30;
 }
 
@@ -65,7 +75,7 @@ uint64_t __month_from_days(uint64_t days, uint64_t& month_days, uint64_t year) {
 	days--;
 	for(uint64_t i=1;; ++i) {
 		const uint64_t d = days_in_month(i, year);
-		if(days <= d) {
+		if(days < d) {
 			month_days = days+1;
 			return i;
 		}

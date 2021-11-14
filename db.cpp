@@ -189,11 +189,11 @@ namespace db {
 		virtual void to_csv(std::ostream& out) override {
 			super::to_csv(out);
 			out << "," << course->id;
-			out << "," << to_string(planned_start);
-			out << "," << to_string(planned_end);
 			out << "," << to_string(start);
 			out << "," << to_string(end);
-			out << "," << (has_problems ? "true" : "false");
+			out << "," << to_string(planned_start);
+			out << "," << to_string(planned_end);
+			out << "," << (has_problems ? "1" : "0");
 		}
 		virtual std::string _tab() override { return "webinar"; }
 	};
@@ -212,10 +212,10 @@ namespace db {
 		}
 		virtual void to_csv(std::ostream& out) override {
 			super::to_csv(out);
+			out << "," << user->id;
 			out << "," << to_string(entry_date);
 			out << "," << to_string(exit_date);
 			out << "," << webinar->id;
-			out << "," << user->id;
 		}
 		virtual std::string _tab() override { return "stay"; }
 	};
