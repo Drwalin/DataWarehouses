@@ -160,7 +160,7 @@ std::vector<db::problem*> distribute_problems(
 	return problems;
 }
 
-void generate_ankiety_zgloszenia(const std::vector<db::webinar*>& webinars,
+void generate_ankiety_zgloszenia(const std::vector<db::problem*>& problems,
 		Time start, Time end) {
 	uint64_t count_oceny_course =
 		config["tables"]["ocena_kursu"]["size"];
@@ -175,17 +175,7 @@ void generate_ankiety_zgloszenia(const std::vector<db::webinar*>& webinars,
 		(new db::ankieta_portalu)->add();
 	for(uint64_t i=0; i<count_zgloszenia; ++i) {
 		auto z = new db::zgloszenia_problemow;
-		for(int ___RE=0; ___RE<10; ++___RE) {
-			if(___RE > 1)
-				printf(" trying 1: %i %s<>%s  -> %s\n", ___RE, start.to_string().c_str(),
-						end.to_string().c_str(), z->date.to_string().c_str());
-			z->date = random(start, end);
-			if(z->date > end ||
-				z->date < start)
-				continue;
-			else
-				break;
-		}
+		z->date = random(start, end);
 		switch(random(0,2)) {
 			case 0:
 				{
@@ -196,22 +186,11 @@ void generate_ankiety_zgloszenia(const std::vector<db::webinar*>& webinars,
 			case 1:
 				{
 					z->opis = "Wygenerowany opis zgloszenia problemow z webinarem";
-					z->webinar = db::problem::entities_list[
-						random(db::problem::entities_list.size())];
-					for(int ___RE=0; ___RE<10; ++___RE) {
-						if(___RE > 1)
-							printf(" trying 2: %i %s<>%s  -> %s\n", ___RE,
-									z->webinar->webinar->start.to_string().c_str(),
-									z->webinar->webinar->end.to_string().c_str(), z->date.to_string().c_str());
-						z->date = generate_normal_min_max(
-								z->webinar->webinar->start,
-								z->webinar->webinar->end);
-						if(z->date > z->webinar->webinar->end ||
-							z->date < z->webinar->webinar->start)
-							continue;
-						else
-							break;
-					}
+					z->webinar = problems[
+						random(problems.size())];
+					z->date = generate_normal_min_max(
+							z->webinar->webinar->start,
+							z->webinar->webinar->end);
 				} break;
 			default:
 				{
@@ -277,7 +256,7 @@ void generate_snapshot(Time start, Time end) {
 			config["tables"]["problem"]["size"]);
 	
 	
-	generate_ankiety_zgloszenia(webinars, start, end);
+	generate_ankiety_zgloszenia(problems, start, end);
 	
 	save_to_files();
 }
