@@ -34,10 +34,9 @@ std::string random_user_name() {
 		return random_uuid() + " " + random_uuid();
 	}
 	
-	std::string ret = first_names[random(0,0)%first_names.size()].String() + " "
-// 		+ second_names[random(0,0)%second_names.size()].String() + " "
-		+ third_names[random(0,0)%third_names.size()].String();
-// 	printf(" name = '%s'\n", ret.c_str());
+	std::string ret = first_names[random(first_names.size())].String() + " "
+// 		+ second_names[random(second_names.size())].String() + " "
+		+ third_names[random(third_names.size())].String();
 	return ret;
 }
 
@@ -47,7 +46,7 @@ std::string random_user_role() {
 		"admin",
 		"prowadzacy"
 	};
-	return roles[random(0,0)%roles.size()];
+	return roles[random(roles.size())];
 }
 
 std::string random_problem_type() {
@@ -59,7 +58,7 @@ std::string random_problem_type() {
 		"przeciążenie",
 		"awaria"
 	};
-	return types[random(0,0)%types.size()];
+	return types[random(types.size())];
 }
 
 std::string random_problem_culprit() {
@@ -69,7 +68,7 @@ std::string random_problem_culprit() {
 		"nezarejestrowano",
 		"prowadzacy"
 	};
-	return culprits[random(0,0)%culprits.size()];
+	return culprits[random(culprits.size())];
 }
 
 std::string random_course_name() {
@@ -89,7 +88,7 @@ std::string random_course_name() {
 		return random_uuid() + " " + random_uuid();
 	}
 	
-	return a[random(0,0)%a.size()].String() + " "
-		+ b[random(0,0)%b.size()].String();
+	return a[random(a.size())].String() + " "
+		+ b[random(b.size())].String();
 }
 

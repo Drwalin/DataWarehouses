@@ -1,19 +1,19 @@
 {
 	"tables": {
 		"user": {
-			"size": 10000,
+			"size": 30000,
 			"number_admins": 10,
 			"number_prowadzacy": 250,
 			"csv": "users.csv",
 			"changes": 100
 		},
 		"course": {
-			"size": 100,
+			"size": 200,
 			"csv": "courses.csv",
 			"changes": 3
 		},
 		"webinar": {
-			"size": 2500,
+			"size": 8000,
 			"csv": "webinars.csv",
 			"changes": 0
 		},
@@ -23,7 +23,7 @@
 			"changes": 0
 		},
 		"problem": {
-			"size": 10000,
+			"size": 300,
 			"csv": "problems.csv",
 			"changes": 10
 		}

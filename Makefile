@@ -1,6 +1,6 @@
 
 run:
-	g++ main.cpp -pedantic -Wall -ggdb3
+	g++ main.cpp -pedantic -Wall -O4
 	./a.out
 
 sql-cli:

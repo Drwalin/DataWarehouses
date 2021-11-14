@@ -30,11 +30,12 @@ int main() {
 	srand(time(NULL));
 	read_config();
 	
+	::config.json["output_head"] = "snapshot1/";
 	generate_snapshot(config.date.start1, config.date.end1);
+	::config.json["output_head"] = "snapshot2/";
 	generate_snapshot(config.date.start2, config.date.end2);
-
 	
-	
+	printf(" work done!");
 	
 	return 0;
 }

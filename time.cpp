@@ -134,8 +134,32 @@ struct Time {
 	inline Time& operator+=(Time o)       { seconds+=o.seconds; return *this; }
 	inline Time  operator- (Time o) const { return Time(seconds-o.seconds); }
 	inline Time& operator-=(Time o)       { seconds-=o.seconds; return *this; }
+	inline Time  operator* (Time o) const { return Time(seconds*o.seconds); }
+	inline Time& operator*=(Time o)       { seconds*=o.seconds; return *this; }
+	inline Time  operator/ (Time o) const { return Time(seconds/o.seconds); }
+	inline Time& operator/=(Time o)       { seconds/=o.seconds; return *this; }
 	inline Time  operator% (Time o) const { return Time(seconds%o.seconds); }
 	inline Time& operator%=(Time o)       { seconds%=o.seconds; return *this; }
+	inline Time  operator+ (uint64_t o) const { return Time(seconds+o); }
+	inline Time& operator+=(uint64_t o)       { seconds+=o; return *this; }
+	inline Time  operator- (uint64_t o) const { return Time(seconds-o); }
+	inline Time& operator-=(uint64_t o)       { seconds-=o; return *this; }
+	inline Time  operator* (uint64_t o) const { return Time(seconds*o); }
+	inline Time& operator*=(uint64_t o)       { seconds*=o; return *this; }
+	inline Time  operator/ (uint64_t o) const { return Time(seconds/o); }
+	inline Time& operator/=(uint64_t o)       { seconds/=o; return *this; }
+	inline Time  operator% (uint64_t o) const { return Time(seconds%o); }
+	inline Time& operator%=(uint64_t o)       { seconds%=o; return *this; }
+	inline Time  operator+ (int o) const { return Time(seconds+o); }
+	inline Time& operator+=(int o)       { seconds+=o; return *this; }
+	inline Time  operator- (int o) const { return Time(seconds-o); }
+	inline Time& operator-=(int o)       { seconds-=o; return *this; }
+	inline Time  operator* (int o) const { return Time(seconds*o); }
+	inline Time& operator*=(int o)       { seconds*=o; return *this; }
+	inline Time  operator/ (int o) const { return Time(seconds/o); }
+	inline Time& operator/=(int o)       { seconds/=o; return *this; }
+	inline Time  operator% (int o) const { return Time(seconds%o); }
+	inline Time& operator%=(int o)       { seconds%=o; return *this; }
 	
 	inline operator uint64_t() const { return seconds; }
 	
@@ -203,5 +227,13 @@ inline std::string to_string(Time t) {
 bool is_weekend(Time t) {
 	uint64_t day = t.days() % 7;
 	return day==2 || day==3;
+}
+
+namespace std {
+	inline void swap(Time& a, Time& b) {
+		Time t = a;
+		a = b;
+		b = t;
+	}
 }
 

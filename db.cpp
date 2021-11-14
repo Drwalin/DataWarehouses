@@ -10,6 +10,7 @@
 #include <map>
 #include <unordered_map>
 #include <unordered_set>
+#include <algorithm>
 
 #include "JSON/include/JSON.hpp"
 
@@ -66,7 +67,10 @@ namespace db {
 	template<typename T>
 	class table {
 	public:
-		table() = default;
+		table() {
+			++constructed_objects;
+		}
+		inline static uint64_t constructed_objects = 0;
 		virtual ~table() = default;
 		std::string id;
 		using table_type = std::unordered_map<std::string, T*>;
@@ -90,10 +94,18 @@ namespace db {
 		inline static void table_to_csv() {
 			std::string table_name = table::entities.begin()->second->_tab();
 			std::string file_name = ::config["tables"][table_name]["csv"];
+			file_name = ::config["output_head"].String() + file_name;
 			std::ofstream file(file_name);
-			std::map<std::string, T*> sorted(entities.begin(), entities.end());
+			std::vector<T*> sorted;
+			sorted.reserve(entities.size());
+			for(const auto& it : entities)
+				sorted.emplace_back(it.second);
+			std::sort(sorted.begin(), sorted.end(),
+					[](const T*a, const T* b)->bool{
+						return a->id < b->id;
+					});
 			for(auto it : sorted) {
-				it.second->to_csv(file);
+				it->to_csv(file);
 				file << "\n";
 			}
 		}
@@ -106,7 +118,6 @@ namespace db {
 	public:
 		std::string name;
 		std::string role;
-		std::unordered_set<class stay*> stays;
 		
 		inline static array_type instructors;
 		inline static array_type others;
@@ -169,9 +180,7 @@ namespace db {
 		Time start;
 		Time end;
 		bool has_problems;
-		std::unordered_set<class stay*> stays;
 		std::unordered_set<class user*> users;
-		std::unordered_set<class problem*> problems;
 		virtual void to_csv(std::ostream& out) override {
 			super::to_csv(out);
 			out << "," << course->id;
@@ -194,18 +203,13 @@ namespace db {
 		class user* user;
 		virtual void add() override {
 			super::add();
-			if(webinar)
-			webinar->stays.insert(this);
-			if(user)
-			user->stays.insert(this);
+			webinar->users.insert(user);
 		}
 		virtual void to_csv(std::ostream& out) override {
 			super::to_csv(out);
 			out << "," << to_string(entry_date);
 			out << "," << to_string(exit_date);
-			if(webinar)
 			out << "," << webinar->id;
-			if(user)
 			out << "," << user->id;
 		}
 		virtual std::string _tab() override { return "stay"; }
@@ -223,17 +227,13 @@ namespace db {
 			super::to_csv(out);
 			type = random_problem_type();
 			culprit = random_problem_culprit();
-			if(webinar)
 			out << "," << webinar->id;
 			out << "," << type;
 			out << "," << culprit;
 		}
 		virtual void add() override {
 			super::add();
-			if(webinar)
 			webinar->has_problems = true;
-			if(webinar)
-			webinar->problems.insert(this);
 		}
 		virtual std::string _tab() override { return "problem"; }
 	};
