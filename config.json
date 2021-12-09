@@ -1,63 +1,63 @@
 {
 	"tables": {
 		"user": {
-			"size": 30000,
+			"size": 300,
 			"number_admins": 10,
 			"number_prowadzacy": 250,
 			"csv": "users.csv",
-			"changes": 100
+			"changes": 20
 		},
 		"course": {
-			"size": 200,
+			"size": 20,
 			"csv": "courses.csv",
-			"changes": 3
+			"changes": 0
 		},
 		"webinar": {
-			"size": 8000,
+			"size": 80,
 			"csv": "webinars.csv",
 			"changes": 0
 		},
 		"stay": {
-			"size": 1000000,
+			"size": 10000,
 			"csv": "stays.csv",
 			"changes": 0
 		},
 		"problem": {
-			"size": 300,
+			"size": 30,
 			"csv": "problems.csv",
-			"changes": 10
+			"changes": 0
 		},
 		"ocena_kursu": {
-			"size": 300,
+			"size": 30,
 			"csv": "oceny_kursu.csv"
 		},
 		"ocena_portalu": {
-			"size": 300,
+			"size": 30,
 			"csv": "oceny_portalu.csv"
 		},
 		"zgloszenia_problemow": {
-			"size": 300,
+			"size": 30,
 			"csv": "zgloszenia_problemow.csv",
-			"changes": 10
+			"changes": 0
 		}
 	},
 	"tables_v2": {
 		"user": {
-			"size": 30000,
+			"size": 300,
 			"number_admins": 10,
-			"number_prowadzacy": 250
+			"number_prowadzacy": 25
 		},
 		"course": {
-			"size": 200
+			"size": 20
 		},
 		"webinar": {
-			"size": 8000
+			"size": 80
 		},
 		"stay": {
-			"size": 1000000
+			"size": 10000
 		},
 		"problem": {
-			"size": 300
+			"size": 30
 		},
 		"ocena_kursu": {
 			"size": 30

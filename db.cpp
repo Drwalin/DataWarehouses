@@ -263,7 +263,8 @@ namespace db {
 		int oceny[5];
 		
 		virtual void to_csv(std::ostream& out) override {
-			out << course->id;
+			super::to_csv(out);
+			out << "," << course->id;
 			for(int o : oceny)
 				out << "," << o;
 		}

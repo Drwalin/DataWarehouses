@@ -43,7 +43,7 @@ std::string random_uuid() {
 	for(uint64_t i=0; i<16; ++i)
 		s[i] = c[(v>>(i<<2))&0xF];
 	s[16] = 0;
-	return std::string(s+2);
+	return std::string(s);
 }
 
 uint64_t generate_normal_min_max(uint64_t min, uint64_t max) {
