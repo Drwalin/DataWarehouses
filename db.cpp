@@ -155,19 +155,22 @@ namespace db {
 		
 		virtual void add() override {
 			super::add();
-			unique_name[name] = this;
-		}
-		virtual void to_csv(std::ostream& out) override {
-			super::to_csv(out);
+			
 			name = generate_unique(entities, random_course_name);
+			unique_name[name] = this;
+			
 			ects = 0;
 			for(int i=0; i<6; ++i)
 				ects += random(0, 1);
 			if(ects==0 && random(0, 5))
 				ects = random(1, 6);
+			
 			semester = random(1, 10);
 			if(random(0, 15) == 0)
 				semester = random(11, 15);
+		}
+		virtual void to_csv(std::ostream& out) override {
+			super::to_csv(out);
 			out << "," << name;
 			out << "," << ects;
 			out << "," << semester;

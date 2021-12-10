@@ -51,21 +51,18 @@ std::string random_user_role() {
 
 std::string random_problem_type() {
 	const static std::vector<std::string> types = {
-		"problem z laczem internetowym serwera",
-		"problem z laczem internetowym uzytkownika",
-		"problem z laczem internetowym miejskiej",
-		"awaria sieci elektrycznej miejskiej",
+		"awaria",
 		"przeciazenie",
-		"awaria"
+		"problemy z internetem"
 	};
 	return types[random(types.size())];
 }
 
 std::string random_problem_culprit() {
 	const static std::vector<std::string> culprits = {
-		"student",
+		"uczestnik",
 		"serwer",
-		"nezarejestrowano",
+		"niezarejestrowano",
 		"prowadzacy"
 	};
 	return culprits[random(culprits.size())];
